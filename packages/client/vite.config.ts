@@ -1,0 +1,2 @@
+import { defineConfig } from 'vite';
+export default defineConfig({server:{watch:{ignored:['**/android/**','**/ios/**']},proxy:{'/api':'http://localhost:2567','/health':'http://localhost:2567','/matchmake':'http://localhost:2567','/colyseus':{target:'ws://localhost:2567',ws:true}}},build:{chunkSizeWarningLimit:1500,rollupOptions:{output:{manualChunks(id){if(id.includes('/node_modules/@babylonjs/'))return 'babylon';if(id.includes('/node_modules/@supabase/'))return 'cloud';if(id.includes('/node_modules/@colyseus/'))return 'network';}}}}});

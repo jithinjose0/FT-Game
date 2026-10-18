@@ -1,0 +1,1000 @@
+{
+  "version": 1,
+  "units": "metres_seconds_degrees",
+  "raft_diameter": 4,
+  "design_speed": 14,
+  "spline_type": "QUINTIC_BEZIER_C2",
+  "spline_nodes": [
+    {
+      "id": "spawn-0",
+      "edge": "spawn",
+      "position": [
+        0,
+        24,
+        0
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "spawn-1",
+      "edge": "spawn",
+      "position": [
+        0,
+        24,
+        56
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "s-curves-0",
+      "edge": "s-curves",
+      "position": [
+        0,
+        24,
+        56
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "s-curves-1",
+      "edge": "s-curves",
+      "position": [
+        -24,
+        24,
+        88
+      ],
+      "tangent": [
+        10.7912,
+        0,
+        30.1256
+      ],
+      "track_width": 9,
+      "wall_banking_degrees": 35
+    },
+    {
+      "id": "s-curves-2",
+      "edge": "s-curves",
+      "position": [
+        24,
+        24,
+        123
+      ],
+      "tangent": [
+        11.011,
+        0,
+        32.1154
+      ],
+      "track_width": 9,
+      "wall_banking_degrees": -35
+    },
+    {
+      "id": "s-curves-3",
+      "edge": "s-curves",
+      "position": [
+        0,
+        24,
+        158
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "branch-a-0",
+      "edge": "branch-a",
+      "position": [
+        0,
+        24,
+        158
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "branch-a-1",
+      "edge": "branch-a",
+      "position": [
+        -16,
+        24,
+        190
+      ],
+      "tangent": [
+        -4.7545,
+        0,
+        25.3573
+      ],
+      "track_width": 6,
+      "wall_banking_degrees": 16.476
+    },
+    {
+      "id": "branch-a-2",
+      "edge": "branch-a",
+      "position": [
+        -12,
+        24,
+        222
+      ],
+      "tangent": [
+        6.2794,
+        0,
+        23.5476
+      ],
+      "track_width": 6,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "branch-a-3",
+      "edge": "branch-a",
+      "position": [
+        0,
+        24,
+        250
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "branch-b-0",
+      "edge": "branch-b",
+      "position": [
+        0,
+        24,
+        158
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "branch-b-1",
+      "edge": "branch-b",
+      "position": [
+        37.1524,
+        24,
+        187
+      ],
+      "tangent": [
+        14.0573,
+        0,
+        24.2156
+      ],
+      "track_width": 14,
+      "wall_banking_degrees": -23.8102
+    },
+    {
+      "id": "branch-b-2",
+      "edge": "branch-b",
+      "position": [
+        37.1524,
+        24,
+        222
+      ],
+      "tangent": [
+        -14.2232,
+        0,
+        24.1185
+      ],
+      "track_width": 14,
+      "wall_banking_degrees": -24.1986
+    },
+    {
+      "id": "branch-b-3",
+      "edge": "branch-b",
+      "position": [
+        0,
+        24,
+        250
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "gauntlet-0",
+      "edge": "gauntlet",
+      "position": [
+        0,
+        24,
+        250
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "gauntlet-1",
+      "edge": "gauntlet",
+      "position": [
+        0,
+        24,
+        295
+      ],
+      "tangent": [
+        3.1874,
+        0,
+        35.8586
+      ],
+      "track_width": 6,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "gauntlet-2",
+      "edge": "gauntlet",
+      "position": [
+        8,
+        24,
+        340
+      ],
+      "tangent": [
+        0,
+        0,
+        36.5645
+      ],
+      "track_width": 6,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "gauntlet-3",
+      "edge": "gauntlet",
+      "position": [
+        0,
+        24,
+        395
+      ],
+      "tangent": [
+        -1.9901,
+        0,
+        19.9007
+      ],
+      "track_width": 6,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "gauntlet-4",
+      "edge": "gauntlet",
+      "position": [
+        0,
+        24,
+        420
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "drop-0",
+      "edge": "drop",
+      "position": [
+        0,
+        24,
+        420
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "drop-1",
+      "edge": "drop",
+      "position": [
+        0,
+        24,
+        440
+      ],
+      "tangent": [
+        0,
+        -5.2338,
+        15.1198
+      ],
+      "track_width": 9,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "drop-2",
+      "edge": "drop",
+      "position": [
+        0,
+        6,
+        472
+      ],
+      "tangent": [
+        0,
+        -3.1514,
+        7.3532
+      ],
+      "track_width": 9,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "drop-3",
+      "edge": "drop",
+      "position": [
+        0,
+        6,
+        482
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "launch-0",
+      "edge": "launch",
+      "position": [
+        0,
+        6,
+        482
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "launch-1",
+      "edge": "launch",
+      "position": [
+        0,
+        10,
+        494
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "gap-0",
+      "edge": "gap",
+      "position": [
+        0,
+        10,
+        494
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "gap-1",
+      "edge": "gap",
+      "position": [
+        0,
+        4,
+        508
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "basin-0",
+      "edge": "basin",
+      "position": [
+        0,
+        4,
+        508
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "basin-1",
+      "edge": "basin",
+      "position": [
+        0,
+        4,
+        560
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "finish-0",
+      "edge": "finish",
+      "position": [
+        0,
+        4,
+        560
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    },
+    {
+      "id": "finish-1",
+      "edge": "finish",
+      "position": [
+        25,
+        4,
+        590
+      ],
+      "tangent": [
+        0,
+        0,
+        31.241
+      ],
+      "track_width": 9,
+      "wall_banking_degrees": -33.1373
+    },
+    {
+      "id": "finish-2",
+      "edge": "finish",
+      "position": [
+        0,
+        4,
+        625
+      ],
+      "tangent": [
+        -7.6923,
+        0,
+        18.4615
+      ],
+      "track_width": 9,
+      "wall_banking_degrees": 17.2151
+    },
+    {
+      "id": "finish-3",
+      "edge": "finish",
+      "position": [
+        0,
+        4,
+        650
+      ],
+      "tangent": [
+        0,
+        0,
+        20
+      ],
+      "track_width": 16,
+      "wall_banking_degrees": 0
+    }
+  ],
+  "hazards": [
+    {
+      "id": "hazard-0",
+      "type": "CENTRAL_LANDMASS",
+      "edge": "branch-a",
+      "position_along_spline": 49.783,
+      "local_offset": [
+        16,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "high_impact": false
+    },
+    {
+      "id": "hazard-1",
+      "type": "DRIFTING_MINE",
+      "edge": "branch-b",
+      "position_along_spline": 66.3774,
+      "local_offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "high_impact": true,
+      "motion": {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "amplitude": 2,
+        "period": 7
+      }
+    },
+    {
+      "id": "hazard-2",
+      "type": "ROTATING_BLADES",
+      "edge": "gauntlet",
+      "position_along_spline": 30,
+      "local_offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "high_impact": true
+    },
+    {
+      "id": "hazard-3",
+      "type": "PENDULUM",
+      "edge": "gauntlet",
+      "position_along_spline": 78,
+      "local_offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "high_impact": true,
+      "motion": {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "amplitude": 2.5,
+        "period": 5
+      }
+    },
+    {
+      "id": "hazard-4",
+      "type": "WALL_TENTACLE",
+      "edge": "gauntlet",
+      "position_along_spline": 126,
+      "local_offset": [
+        2.6,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "high_impact": true
+    },
+    {
+      "id": "hazard-5",
+      "type": "APEX_ROCK",
+      "edge": "s-curves",
+      "position_along_spline": 55,
+      "local_offset": [
+        -1.5,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "high_impact": false
+    },
+    {
+      "id": "hazard-6",
+      "type": "SPIKED_BORDERS",
+      "edge": "branch-a",
+      "position_along_spline": 18,
+      "local_offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "high_impact": false,
+      "end_distance": 81.566,
+      "activation_group": "branch-spikes"
+    },
+    {
+      "id": "hazard-7",
+      "type": "SPIKED_BORDERS",
+      "edge": "gauntlet",
+      "position_along_spline": 0,
+      "local_offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "high_impact": false,
+      "end_distance": 165,
+      "activation_group": "gauntlet-spikes"
+    }
+  ],
+  "track_segments": [
+    {
+      "id": "spawn",
+      "zone": "SPAWN",
+      "from": "start",
+      "to": "rapids",
+      "nodes": [
+        "spawn-0",
+        "spawn-1"
+      ],
+      "length": 56,
+      "next": [
+        "s-curves"
+      ],
+      "profile": "CHANNEL"
+    },
+    {
+      "id": "s-curves",
+      "zone": "S_CURVE",
+      "from": "rapids",
+      "to": "split",
+      "nodes": [
+        "s-curves-0",
+        "s-curves-1",
+        "s-curves-2",
+        "s-curves-3"
+      ],
+      "length": 148.7991,
+      "next": [
+        "branch-a",
+        "branch-b"
+      ],
+      "profile": "CHANNEL"
+    },
+    {
+      "id": "branch-a",
+      "zone": "PATH_SPLIT",
+      "from": "split",
+      "to": "merge",
+      "nodes": [
+        "branch-a-0",
+        "branch-a-1",
+        "branch-a-2",
+        "branch-a-3"
+      ],
+      "length": 99.566,
+      "next": [
+        "gauntlet"
+      ],
+      "profile": "CHANNEL"
+    },
+    {
+      "id": "branch-b",
+      "zone": "PATH_SPLIT",
+      "from": "split",
+      "to": "merge",
+      "nodes": [
+        "branch-b-0",
+        "branch-b-1",
+        "branch-b-2",
+        "branch-b-3"
+      ],
+      "length": 132.7547,
+      "next": [
+        "gauntlet"
+      ],
+      "profile": "CHANNEL"
+    },
+    {
+      "id": "gauntlet",
+      "zone": "GAUNTLET",
+      "from": "merge",
+      "to": "drop-start",
+      "nodes": [
+        "gauntlet-0",
+        "gauntlet-1",
+        "gauntlet-2",
+        "gauntlet-3",
+        "gauntlet-4"
+      ],
+      "length": 171.5242,
+      "next": [
+        "drop"
+      ],
+      "profile": "CHANNEL"
+    },
+    {
+      "id": "drop",
+      "zone": "RAMP",
+      "from": "drop-start",
+      "to": "ramp-start",
+      "nodes": [
+        "drop-0",
+        "drop-1",
+        "drop-2",
+        "drop-3"
+      ],
+      "length": 67.0777,
+      "next": [
+        "launch"
+      ],
+      "profile": "CHANNEL"
+    },
+    {
+      "id": "launch",
+      "zone": "RAMP",
+      "from": "ramp-start",
+      "to": "lip",
+      "nodes": [
+        "launch-0",
+        "launch-1"
+      ],
+      "length": 13.3694,
+      "next": [
+        "gap"
+      ],
+      "profile": "CHANNEL"
+    },
+    {
+      "id": "gap",
+      "zone": "RAMP",
+      "from": "lip",
+      "to": "landing",
+      "nodes": [
+        "gap-0",
+        "gap-1"
+      ],
+      "length": 16.0759,
+      "next": [
+        "basin"
+      ],
+      "profile": "AIR_GAP"
+    },
+    {
+      "id": "basin",
+      "zone": "RAMP",
+      "from": "landing",
+      "to": "pool-end",
+      "nodes": [
+        "basin-0",
+        "basin-1"
+      ],
+      "length": 52,
+      "next": [
+        "finish"
+      ],
+      "profile": "CHANNEL"
+    },
+    {
+      "id": "finish",
+      "zone": "FINISH",
+      "from": "pool-end",
+      "to": "finish-trigger",
+      "nodes": [
+        "finish-0",
+        "finish-1",
+        "finish-2",
+        "finish-3"
+      ],
+      "length": 110.166,
+      "next": [],
+      "profile": "CHANNEL"
+    }
+  ],
+  "routes": {
+    "A": [
+      "spawn",
+      "s-curves",
+      "branch-a",
+      "gauntlet",
+      "drop",
+      "launch",
+      "gap",
+      "basin",
+      "finish"
+    ],
+    "B": [
+      "spawn",
+      "s-curves",
+      "branch-b",
+      "gauntlet",
+      "drop",
+      "launch",
+      "gap",
+      "basin",
+      "finish"
+    ]
+  },
+  "rules": {
+    "width_ratios": {
+      "wide": [
+        3.5,
+        4
+      ],
+      "standard": [
+        2,
+        2.5
+      ],
+      "narrow": [
+        1.5,
+        1.5
+      ]
+    },
+    "sharp_turn_degrees": 30,
+    "bank_range_degrees": [
+      15,
+      35
+    ],
+    "high_impact_min_seconds": 3,
+    "speed_cap": 14,
+    "spawn_safe_seconds": 4,
+    "branch_a_distance_ratio": 0.75,
+    "gravity": 9.81,
+    "collision": {
+      "banks": "STATIC_TRIANGLE_MESH",
+      "spikes": "STATIC_CONVEX_SEGMENTS_PLUS_DAMAGE_SENSOR",
+      "damage_per_second": 18,
+      "damage_integrator": "damage_rate * fixed_dt while overlapping",
+      "bounce_retrigger_seconds": 0.9
+    },
+    "mesh": {
+      "sample_spacing": 0.5,
+      "bank_strip_width": 1.5,
+      "wall_height": 1.2
+    },
+    "gap": {
+      "edge": "gap",
+      "launch_speed": 14,
+      "vertical_speed": 5,
+      "landing_height_delta": -6
+    },
+    "finish": {
+      "edge": "finish",
+      "trigger": "ORIENTED_BOX",
+      "local_size": [
+        16,
+        6,
+        3
+      ],
+      "requires_whole_raft": true
+    },
+    "spike_runs": [
+      {
+        "edge": "branch-a",
+        "from": 18,
+        "to": 81.566,
+        "sides": "BOTH",
+        "activation_group": "branch-spikes"
+      },
+      {
+        "edge": "gauntlet",
+        "from": 0,
+        "to": 165,
+        "sides": "BOTH",
+        "activation_group": "gauntlet-spikes"
+      }
+    ],
+    "flow": {
+      "base": "unit spline tangent * section current",
+      "rocks": "subtract upstream radial component within 6m; add bounded tangential eddy",
+      "eddy_max_speed": 1.2
+    }
+  }
+}

@@ -1,0 +1,58 @@
+name: Native debug builds
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build
+        type: choice
+        default: android
+        options: [android, ios, both]
+jobs:
+  android:
+    if: ${{ inputs.platform != 'ios' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+      - run: npm run build -w client
+        env:
+          VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
+      - run: npx cap sync android
+        working-directory: packages/client
+      - run: chmod +x gradlew && ./gradlew assembleDebug
+        working-directory: packages/client/android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-apk
+          path: packages/client/android/app/build/outputs/apk/debug/*.apk
+  ios:
+    if: ${{ inputs.platform != 'android' }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w client
+        env:
+          VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
+      - run: npm run ios -w client
+      - run: npx cap sync ios
+        working-directory: packages/client
+      - run: xcodebuild -workspace App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+        working-directory: packages/client/ios/App
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: packages/client/ios/App/build/Build/Products/Debug-iphonesimulator/*.app
