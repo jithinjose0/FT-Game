@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Fart Together</string>
-    <string name="title_activity_main">Fart Together</string>
+    <string name="app_name">FART CREW</string>
+    <string name="title_activity_main">FART CREW</string>
     <string name="package_name">com.farttogether.mobile</string>
     <string name="custom_url_scheme">com.farttogether.mobile</string>
 </resources>

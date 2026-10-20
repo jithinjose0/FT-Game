@@ -1,0 +1,24 @@
+# Import this repository via Render > New > Blueprint.
+services:
+  - type: web
+    name: fart-crew
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "2567"
+      - key: DATA_DIR
+        value: /tmp/fart-crew-data
+      - key: VOICE_STUN_URLS
+        sync: false
+      - key: VOICE_TURN_URLS
+        sync: false
+      - key: VOICE_TURN_SECRET
+        sync: false

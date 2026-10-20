@@ -4,3 +4,7 @@ import './recovered/index-DMTkUke5.js';
 import './style.css';
 import {installServerSettings} from './ui/ServerSettings';
 installServerSettings();
+import {installRotationControl} from './ui/RotationControl';
+installRotationControl();
+import {installJourneyOptions} from './ui/JourneyOptions';
+installJourneyOptions();

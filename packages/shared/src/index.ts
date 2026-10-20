@@ -1,4 +1,7 @@
 export const TICK = 1 / 60;
+export const BOAT_COLORS={wood:{name:'Timber',deck:'#c49a5e',hull:'#285c4c',rim:'#e8cd8f'},forest:{name:'Forest',deck:'#65976b',hull:'#214f40',rim:'#d9c79a'},lagoon:{name:'Lagoon',deck:'#6daec0',hull:'#275b79',rim:'#e3d7ac'},coral:{name:'Coral',deck:'#d98978',hull:'#8b4b4b',rim:'#eed7ad'},sunflower:{name:'Sunflower',deck:'#dcc46b',hull:'#85723c',rim:'#f1dfb5'},plum:{name:'Plum',deck:'#ae8abc',hull:'#62476f',rim:'#e1d4b7'}} as const;
+export type BoatColor=keyof typeof BOAT_COLORS;
+export const isBoatColor=(value:unknown):value is BoatColor=>typeof value==='string'&&Object.hasOwn(BOAT_COLORS,value);
 export const SEATS = [{x:-1,z:1},{x:1,z:1},{x:-1,z:-1},{x:1,z:-1},{x:-1,z:2.2},{x:1,z:2.2},{x:-1,z:-2.2},{x:1,z:-2.2}];
 export const COLORS = ['#ffc66b','#f48b97','#74d5bd','#aa9ee1','#d6b16a','#b8d676','#6dbcd4','#d795c8'];
 export const FINISH = 178;
@@ -18,7 +21,7 @@ export type LocalPlayer={name:string;character:CharacterId;binding:string};
 export type Input = { x: number; z: number; power: number; leanX?:number; leanZ?:number; move?:number };
 export type Player = { id:string; name:string; seat:number; gas:number; thrust:number; x:number; z:number; skin:string; character?:CharacterId;boat?:number;owner?:string;grip?:number };
 export type BoatState={id:number;x:number;y:number;z:number;angle:number;vx:number;vz:number;penalties:number;checkpoint:number;health?:number;roll?:number;pitch?:number;finishTime?:number;dnf?:boolean};
-export type Snapshot = { room:string; phase:'lobby'|'playing'|'finished'|'failed'; course:CourseId; players:Player[]; x:number; z:number; angle:number; vx:number; vz:number; time:number; penalties:number; checkpoint:number; countdown:number; host:string; tick:number;mode?:GameMode;boats?:BoatState[];crewSize?:number;coins?:number;collected?:string[];damageTick?:number;failure?:string };
+export type Snapshot = { room:string; phase:'lobby'|'playing'|'finished'|'failed'; course:CourseId; players:Player[]; x:number; z:number; angle:number; vx:number; vz:number; time:number; penalties:number; checkpoint:number; countdown:number; host:string; tick:number;mode?:GameMode;boats?:BoatState[];crewSize?:number;boatColor?:BoatColor;coins?:number;collected?:string[];damageTick?:number;failure?:string };
 export type Score = { name:string; course:CourseId; time:number; date:string;mode?:GameMode };
 export type Obstacle = { x:number; z:number; radius:number; kind:'rock'|'buoy'|'spinner'|'gate'|'pendulum'|'mine'|'roller'|'tentacle'|'island' };
 export const COURSES: Record<CourseId,{name:string; subtitle:string; current:number; color:string; obstacles:Obstacle[]}> = {
@@ -77,6 +80,35 @@ export function hazardContact(o:Obstacle,time:number,course:CourseId,x:number,z:
   return hazardSegments(o).some(([a,b])=>{const ex=b.x-a.x,ez=b.z-a.z,t=Math.max(0,Math.min(1,((px-a.x)*ex+(pz-a.z)*ez)/(ex*ex+ez*ez)));return Math.hypot(px-a.x-ex*t,pz-a.z-ez*t)<boatRadius+(o.kind==='gate'?.9:.45);});
 }
 export function courseCoins(course:CourseId){return [12,30,59,73,99,126,144,163,174].map((z,i)=>({id:`coin-${i}`,...pathPoint(course,z,i%2?2.7:-2.7)}));}
+/** Visible hull dimensions, including the rim, shared with authoritative collision. */
+export const RAFT_SCALE=1.15;
+export function raftBankContact(course:CourseId,x:number,z:number,angle:number,capacity=4){
+  const hw=1.875*RAFT_SCALE,hl=(capacity>4?3.125:2.175)*RAFT_SCALE;
+  // Sample the hull rim so front/rear contacts at the ends of spike zones count.
+  for(let i=0;i<48;i++){
+    const a=i*Math.PI/24,lx=Math.sin(a)*hw,lz=Math.cos(a)*hl;
+    const px=x+lx*Math.cos(angle)+lz*Math.sin(angle),pz=z-lx*Math.sin(angle)+lz*Math.cos(angle),f=courseFrame(course,pz);
+    if(spikedEdge(pz)&&Math.abs((px-f.x)*f.nx)>f.width/2-.75)return true;
+  }
+  return false;
+}
+export function raftHazardContact(o:Obstacle,time:number,course:CourseId,x:number,z:number,angle:number,capacity=4){
+  const pose=obstaclePose(o,time,course);
+  if(pose.lift>1.5)return false;
+  const hw=1.875*RAFT_SCALE,hl=(capacity>4?3.125:2.175)*RAFT_SCALE;
+  const local=(px:number,pz:number)=>{const dx=px-x,dz=pz-z;return {x:dx*Math.cos(angle)-dz*Math.sin(angle),z:dx*Math.sin(angle)+dz*Math.cos(angle)};};
+  const distance=(p:{x:number;z:number})=>Math.hypot(Math.max(0,Math.abs(p.x)-hw),Math.max(0,Math.abs(p.z)-hl));
+  if(['mine','pendulum','buoy','rock','island'].includes(o.kind))return distance(local(pose.x,pose.z))<=o.radius+(['mine','pendulum'].includes(o.kind)?.72:0);
+  const radius=o.kind==='gate'?1.25:.9;
+  return hazardSegments(o).some(([a,b])=>{
+    const world=(p:{x:number;z:number})=>local(pose.x+p.x*Math.cos(pose.angle)+p.z*Math.sin(pose.angle),pose.z-p.x*Math.sin(pose.angle)+p.z*Math.cos(pose.angle));
+    const p=world(a),q=world(b),dx=q.x-p.x,dz=q.z-p.z;
+    // Distance along a segment to a convex rectangle is convex. Find its minimum.
+    let lo=0,hi=1;
+    for(let i=0;i<32;i++){const u=(2*lo+hi)/3,v=(lo+2*hi)/3;const at=(t:number)=>distance({x:p.x+dx*t,z:p.z+dz*t});if(at(u)<at(v))hi=v;else lo=u;}
+    const t=(lo+hi)/2;return Math.min(distance(p),distance(q),distance({x:p.x+dx*t,z:p.z+dz*t}))<=radius;
+  });
+}
 export function sanitizeInput(value:unknown):Input {
   const v = value as Partial<Input> | null;
   if (!v || ![v.x,v.z,v.power].every(n => typeof n==='number' && Number.isFinite(n))) return {x:0,z:0,power:0};
@@ -94,5 +126,10 @@ export function gripOffset(seat:number,grip=0,capacity=4){
   const angle=capacity>4?-Math.PI/8+seat*Math.PI/4:Math.atan2(SEATS[seat].x,SEATS[seat].z);
   const a=angle+Math.max(-1,Math.min(1,grip))*(capacity>4?.22:.48);
   return {x:Math.sin(a)*1.95,z:Math.cos(a)*(capacity>4?3.15:2.05),angle:a};
+}
+/** Animals face the rim; their rear exhaust points outward, opposite the force. */
+export function characterThrust(seat:number,grip=0,capacity=4,boatAngle=0){
+  const angle=gripOffset(seat,grip,capacity).angle+boatAngle;
+  return {x:-Math.sin(angle),z:-Math.cos(angle)};
 }
 export const formatTime = (seconds:number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toFixed(2).padStart(5,'0')}`;

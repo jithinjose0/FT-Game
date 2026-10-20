@@ -9,6 +9,8 @@ export class TouchControls {
   move=0;
   splitKeyboard=false;
   constructor(private joystick:HTMLElement,private trigger:HTMLElement,private knob:HTMLElement,private balance?:HTMLElement) {
+    joystick.hidden=true;joystick.style.display='none';
+    const caption=joystick.parentElement?.querySelector('small');if(caption)caption.textContent='TIME YOUR GAS TO STEER TOGETHER';
     let pointer:number|undefined;
     const aim=(e:PointerEvent)=>{
       const rect=joystick.getBoundingClientRect();
@@ -33,13 +35,13 @@ export class TouchControls {
     });
     window.addEventListener('keyup',e=>this.keys.delete(e.code));
     const stop=()=>{this.keys.clear();this.firing=false;this.leaning=false;this.move=0;this.input.power=0;};
-    window.addEventListener('blur',stop);document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
+    window.addEventListener('blur',stop);window.addEventListener('orientationchange',stop);window.screen.orientation?.addEventListener('change',stop);document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
   }
   read():Input {
     if(!this.active)return {x:0,z:0,power:0};
     const x=Number(this.keys.has('KeyD')||(!this.splitKeyboard&&this.keys.has('ArrowRight')))-Number(this.keys.has('KeyA')||(!this.splitKeyboard&&this.keys.has('ArrowLeft')));
     const z=Number(this.keys.has('KeyW')||(!this.splitKeyboard&&this.keys.has('ArrowUp')))-Number(this.keys.has('KeyS')||(!this.splitKeyboard&&this.keys.has('ArrowDown')));
-    if(x||z){const l=Math.hypot(x,z);this.input.x=x/l;this.input.z=z/l;}
+    this.input.x=0;this.input.z=1;
     this.input.power=this.firing||this.keys.has('Space')?this.strength:0;
     this.input.move=this.move||Number(this.keys.has('KeyE'))-Number(this.keys.has('KeyQ'));
     const lean=this.leaning||this.keys.has('ShiftLeft')||this.keys.has('ShiftRight');

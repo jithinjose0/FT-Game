@@ -8,8 +8,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RaftRoom } from './rooms/RaftRoom.ts';
 import { scores } from './storage.ts';
+import {voiceStatus} from './voice.ts';
+const voice=voiceStatus(); // Fail startup on incomplete relay configuration, without logging secrets.
 const app=express();app.use(cors());app.use(express.json({limit:'8kb'}));
-app.get('/health',(_req,res)=>res.json({ok:true,physics:'havok',version:'1.0.0'}));
+app.get('/health',(_req,res)=>res.json({ok:true,physics:'havok',version:'1.8',voice}));
 app.get('/api/leaderboard',async(_req,res)=>{try{res.json(await scores());}catch{res.status(503).json({error:'Leaderboard unavailable'});}});
 const web=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../client/dist');
 app.use(express.static(web));
@@ -19,4 +21,4 @@ const server=new Server({transport:new WebSocketTransport({server:http})});
 server.define('raft',RaftRoom).filterBy(['course','crewSize']);
 const port=Number(process.env.PORT||2567);
 await server.listen(port,'0.0.0.0');
-console.log(`Fart Together server: http://localhost:${port}`);
+console.log(`FART CREW server: http://localhost:${port}`);

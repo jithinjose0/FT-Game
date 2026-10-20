@@ -7,6 +7,7 @@ import { PhysicsAggregate } from '@babylonjs/core/Physics/v2/physicsAggregate.js
 import { PhysicsShapeType } from '@babylonjs/core/Physics/v2/IPhysicsEnginePlugin.js';
 import '@babylonjs/core/Physics/physicsEngineComponent.js';
 import HavokPhysics from '@babylonjs/havok';
+import {RAFT_SCALE,raftHazardContact,raftBankContact} from '@ft/shared';
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { COURSES, RAMPS, courseFrame, courseSurface, pathPoint, obstaclePose, hazardSegments, hazardContact, openEdge, spikedEdge, rotateOffset, gripOffset, TICK, type CourseId, type Input, type Obstacle } from '@ft/shared';
@@ -18,7 +19,7 @@ function loadHavok(){
 }
 export class ServerPhysics {
   engine=new NullEngine();scene=new Scene(this.engine);
-  raft=MeshBuilder.CreateBox('raft',{width:3.3,height:.6,depth:4.2},this.scene);
+  raft=MeshBuilder.CreateBox('raft',{width:3.75*RAFT_SCALE,height:.6,depth:4.35*RAFT_SCALE},this.scene);
   body!:PhysicsAggregate;
   height=0;verticalSpeed=0;airborne=false;time=0;lastBoost=-1;course:CourseId='lagoon';
   spikeHit=false;capacity=4;
@@ -70,6 +71,8 @@ export class ServerPhysics {
   step(current:number){
     this.time+=TICK;this.positionHazards();this.landingImpact=0;this.contactDamage=0;this.spikeHit=false;
     const before=this.raft.position.z,frame=courseFrame(this.course,before),incomingSpeed=this.body.body.getLinearVelocity().length();
+    const hitsSpike=()=>raftBankContact(this.course,this.raft.position.x,this.raft.position.z,this.angle,this.capacity)||COURSES[this.course].obstacles.some(o=>!['rock','island','buoy'].includes(o.kind)&&raftHazardContact(o,this.time,this.course,this.raft.position.x,this.raft.position.z,this.angle,this.capacity));
+    const beforeSurface=courseSurface(this.course,before),beforeHit=beforeSurface!==null&&Math.abs(this.height-beforeSurface)<.9&&hitsSpike();
     // No river thrust or automatic boost pads. Motion comes from the crew,
     // retained momentum, collisions and gravity on a real downhill section.
     const slopeA=courseSurface(this.course,before),slopeB=courseSurface(this.course,before+.2);
@@ -92,10 +95,11 @@ export class ServerPhysics {
     this.roll+=this.rollSpeed*TICK;this.pitch+=this.pitchSpeed*TICK;
     this.previousVelocity.copyFrom(velocity);this.leanX=0;this.leanZ=0;this.leanCount=0;
     if(surface!==null&&Math.abs(this.height-surface)<.9){
-      const a=this.angle-f.angle,extent=Math.abs(Math.cos(a))*1.65+Math.abs(Math.sin(a))*(this.capacity>4?3.05:2.1);
+      const a=this.angle-f.angle,extent=(Math.abs(Math.cos(a))*1.875+Math.abs(Math.sin(a))*(this.capacity>4?3.125:2.175))*RAFT_SCALE;
       const bank=spikedEdge(z)&&Math.abs((this.raft.position.x-f.x)*f.nx)>f.width/2-extent-.6;
-      this.spikeHit=bank||COURSES[this.course].obstacles.some(o=>!['rock','island','buoy'].includes(o.kind)&&hazardContact(o,this.time,this.course,this.raft.position.x,z));
+      this.spikeHit=bank||hitsSpike();
     }
+    this.spikeHit=this.spikeHit||beforeHit;
     if(this.time-this.lastHit>.9&&surface!==null&&Math.abs(this.height-surface)<1){
       const impactSpeed=Math.max(velocity.length(),incomingSpeed);
       const obstacle=COURSES[this.course].obstacles.find(o=>hazardContact(o,this.time,this.course,this.raft.position.x,z));

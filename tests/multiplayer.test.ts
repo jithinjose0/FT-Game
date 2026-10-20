@@ -15,20 +15,31 @@ test('real server: four/eight players share one boat, local crews, character cho
     assert.ok(ready,output);
     const clients=Array.from({length:5},()=>new Client('ws://localhost:2568'));
     const states=new Map<string,Snapshot>();
-    function watch(room:Room){room.onMessage('snapshot',(s:Snapshot)=>states.set(room.sessionId,s));room.onMessage('notice',()=>{});rooms.push(room);}
+    function watch(room:Room){room.onMessage('snapshot',(s:Snapshot)=>states.set(room.sessionId,s));room.onMessage('notice',()=>{});room.onMessage('voice-left',()=>{});rooms.push(room);}
     const host=await clients[0].create('raft',{name:'Captain',course:'lagoon'});watch(host);
     for(let i=1;i<4;i++)watch(await clients[i].joinById(host.roomId,{name:'Sailor '+i}));
     await assert.rejects(clients[4].joinById(host.roomId,{name:'Fifth'}));
+    const signals:any[]=[],peerLists:string[][]=[];
+    host.onMessage('voice-config',()=>{});host.onMessage('voice-peers',()=>{});
+    rooms[1].onMessage('voice-config',()=>{});rooms[1].onMessage('voice-peers',(ids:string[])=>peerLists.push(ids));
+    rooms[1].onMessage('voice-signal',value=>signals.push(value));
+    host.send('voice-ready',true);await delay(100);rooms[1].send('voice-ready',true);await delay(100);
+    assert.deepEqual(peerLists,[[host.sessionId]],'only opted-in room members are offered voice');
+    rooms[2].send('voice-signal',{to:rooms[1].sessionId,description:{type:'offer',sdp:'unapproved'}});
+    host.send('voice-signal',{to:rooms[1].sessionId,description:{type:'offer',sdp:'test-offer'}});await delay(100);
+    assert.deepEqual(signals,[{from:host.sessionId,description:{type:'offer',sdp:'test-offer'}}]);
+    rooms[1].send('voice-ready',false);await delay(100);host.send('voice-signal',{to:rooms[1].sessionId,description:{type:'offer',sdp:'muted'}});await delay(100);
+    assert.equal(signals.length,1,'leaving voice prevents further signaling');host.send('voice-ready',false);
     await delay(250);const initial=states.get(host.sessionId)!;
     assert.equal(initial.players.length,4);assert.equal(new Set(initial.players.map(p=>p.seat)).size,4);
     rooms[1].send('start');await delay(150);assert.equal(states.get(host.sessionId)!.phase,'lobby');
     host.send('start');
     for(let i=0;i<100;i++){if(states.get(host.sessionId)?.phase==='playing'&&states.get(host.sessionId)!.countdown===0)break;await delay(100);}
     assert.equal(states.get(host.sessionId)!.phase,'playing');assert.equal(states.get(host.sessionId)!.countdown,0);
-    const timer=setInterval(()=>host.send('input',{x:0,z:1,power:1}),50);await delay(1200);clearInterval(timer);
+    const timer=setInterval(()=>rooms[2].send('input',{x:0,z:1,power:1}),50);await delay(1200);clearInterval(timer);
     const a=states.get(host.sessionId)!,b=states.get(rooms[1].sessionId)!;
-    assert.ok(a.players.find(p=>p.id===host.sessionId)!.gas<90,`fuel must drain: ${JSON.stringify(a)}`);assert.ok(a.z>5.1,`raft must move: ${JSON.stringify(a)}`);assert.ok(Math.abs(a.z-b.z)<.3,'clients must see the same authoritative boat');
-    await delay(650);assert.equal(states.get(host.sessionId)!.players.find(p=>p.id===host.sessionId)!.thrust,0,'stale inputs must stop');
+    assert.ok(a.players.find(p=>p.id===rooms[2].sessionId)!.gas<90,`fuel must drain: ${JSON.stringify(a)}`);assert.ok(a.z>5.1,`raft must move: ${JSON.stringify(a)}`);assert.ok(Math.abs(a.z-b.z)<.3,'clients must see the same authoritative boat');
+    await delay(650);assert.equal(states.get(host.sessionId)!.players.find(p=>p.id===rooms[2].sessionId)!.thrust,0,'stale inputs must stop');
     host.send('rescue');await delay(100);assert.equal(states.get(host.sessionId)!.penalties,0,'one of four players cannot rescue alone');
     rooms[1].send('rescue');await delay(150);assert.equal(states.get(host.sessionId)!.penalties,5);
     await host.leave();await delay(250);assert.equal(states.get(rooms[1].sessionId)!.host,rooms[1].sessionId);assert.equal(states.get(rooms[1].sessionId)!.players.length,3);
@@ -49,7 +60,7 @@ test('real server: four/eight players share one boat, local crews, character cho
     assert.equal(states.get(crew.sessionId)!.players.find(p=>p.id===crewRooms[1].sessionId)!.character,'croc','cannot change someone else’s character');
     crew.send('start');
     for(let i=0;i<100;i++){if(states.get(crew.sessionId)?.countdown===0&&states.get(crew.sessionId)?.phase==='playing')break;await delay(100);}
-    const crewTimer=setInterval(()=>{crew.send('input',{x:0,z:1,power:1});crew.send('localInputs',[{id:crewRooms[1].sessionId,input:{x:0,z:-1,power:1}}]);},50);
+    const crewTimer=setInterval(()=>{crewRooms[4].send('input',{x:0,z:1,power:1});crew.send('localInputs',[{id:crewRooms[1].sessionId,input:{x:0,z:-1,power:1}}]);},50);
     await delay(1000);clearInterval(crewTimer);
     const racing=states.get(crew.sessionId)!;
     assert.ok(racing.boats![0].vz>.4,'any crewmate must move the shared raft');assert.ok(Math.abs(racing.z-states.get(crewRooms[1].sessionId)!.z)<.3,'all crewmates must see the same boat');

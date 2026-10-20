@@ -73,7 +73,7 @@ No `.env` file is required for the basic setup. Optional root `.env` values are 
 
 ### The currently diagnosed Windows firewall issue
 
-On this PC, the Wi-Fi profile is **Public** and two explicit inbound Node.js block rules exist (TCP and UDP). That explains why the health endpoint works on the PC but could not be opened on the phone. **No firewall change has been applied.**
+Historical diagnosis: this PC previously had Public-profile Node.js block rules. On 20 October 2026 the running Node executable instead had inbound allow rules and no matching active block. The server responded at 192.168.1.6:2567 on the PC. Phone connectivity remained unresolved. The scripts below target the old installation and must not be used unless their preconditions match.
 
 If you own/manage the PC and authorize the exception, open PowerShell **as Administrator**, change into this repository, and run:
 
@@ -95,10 +95,10 @@ After an authorized fix, repeat the phone Chrome health check. If it still fails
 
 ## 5. Install and configure the Android APK
 
-1. Download `artifacts/Fart-Together-debug.apk` from this repository. GitHub may show a download button rather than previewing the binary. Transfer it to the phone or download the raw file using the phone browser.
+1. Download `artifacts/Fart-Crew-debug.apk` from this repository. GitHub may show a download button rather than previewing the binary. Transfer it to the phone or download the raw file using the phone browser.
 2. Open the APK. If Android asks, allow your browser/file manager to install this test app. Use a current Android System WebView with WebGL support; the APK declares minimum Android API 23.
-3. Open **Fart Together → Settings (gear) → Multiplayer server**.
-4. Enter `ws://YOUR-PC-IP:2567`. For the checked PC: `ws://192.168.1.5:2567`.
+3. Open **FART CREW → Settings (gear) → Multiplayer server**.
+4. Enter `ws://YOUR-PC-IP:2567`. For the checked PC: `ws://192.168.1.6:2567`.
 5. Tap **TEST CONNECTION**. It should say the server is reachable.
 6. Tap **SAVE SERVER**, close Settings, choose your character and choose **ASSEMBLE CREW**.
 7. The host shares the six-character room code. On each other phone, save the same server address, choose **JOIN A BOAT**, and enter that code.
@@ -192,7 +192,7 @@ For the supplied Windows CLI helper, return to the repository root and run:
 powershell -NoProfile -File tools/build-apk.ps1
 ```
 
-It uses `.tools` on the original machine or your Java/SDK environment on another machine, copies the output to `artifacts/Fart-Together-debug.apk`, verifies its signature and writes a checksum. The helper builds native code from the already-synced web assets, so run the client build and Capacitor sync first. Java's project-local socket directory avoids the temporary-directory IPC issue encountered on the original Windows installation.
+It uses `.tools` on the original machine or your Java/SDK environment on another machine, copies the output to `artifacts/Fart-Crew-debug.apk`, verifies its signature and writes a checksum. The helper builds native code from the already-synced web assets, so run the client build and Capacitor sync first. Java's project-local socket directory avoids the temporary-directory IPC issue encountered on the original Windows installation.
 
 The checked-in APK is a direct-test build, not a signed Play Store release. Play Store distribution needs a release key, signing configuration, app bundle, listing and your developer account. Those publication steps have not been performed.
 

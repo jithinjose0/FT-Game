@@ -1,6 +1,8 @@
 import { Client, type Room } from '@colyseus/sdk';
 import type { Snapshot, CourseId, Input, CharacterId, LocalPlayer } from '@ft/shared';
 import { Capacitor } from '@capacitor/core';
+import { VoiceChat } from './VoiceChat';
+import {journeyPreferences} from './JourneyPreferences';
 export function configuredServer(){try{return localStorage.getItem('ft-server')||import.meta.env.VITE_SERVER_URL||'';}catch{return import.meta.env.VITE_SERVER_URL||'';}}
 export function setServer(value:string){
   if(!value.trim()){localStorage.removeItem('ft-server');return;}
@@ -17,10 +19,12 @@ export function serverURL() {
 }
 export class NetworkManager {
   room?:Room;
+  voice?:VoiceChat;
   async connect(mode:'create'|'join'|'quick',name:string,course:CourseId,skin:string,code:string,onState:(s:Snapshot)=>void,onNotice:(s:string)=>void,onLeave:()=>void,setup?:{crewSize:number;character:CharacterId;localPlayers?:LocalPlayer[]}) {
     const client=new Client(serverURL());
-    const options={name,course,skin,mode:'coop',...setup};
+    const options={name,course,skin,mode:'coop',boatColor:journeyPreferences().boatColor,...setup};
     this.room=mode==='join'?await client.joinById(code.trim().toUpperCase(),options):mode==='quick'?await client.joinOrCreate('raft',options):await client.create('raft',options);
+    this.voice?.dispose();this.voice=new VoiceChat(this.room);
     this.room.onMessage('snapshot',onState);
     this.room.onMessage('notice',onNotice);
     this.room.onError((_code,message)=>onNotice(message||'Connection error'));
@@ -30,5 +34,5 @@ export class NetworkManager {
   input(input:Input){this.room?.send('input',input);}
   localInputs(inputs:{id:string;input:Input}[]){this.room?.send('localInputs',inputs);}
   action(action:string,payload?:unknown){this.room?.send(action,payload);}
-  async leave(){const room=this.room;this.room=undefined;if(room)await Promise.race([room.leave(),new Promise(resolve=>setTimeout(resolve,1000))]);}
+  async leave(){this.voice?.dispose();this.voice=undefined;const room=this.room;this.room=undefined;if(room)await Promise.race([room.leave(),new Promise(resolve=>setTimeout(resolve,1000))]);}
 }

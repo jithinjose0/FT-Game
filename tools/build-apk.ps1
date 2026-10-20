@@ -1,4 +1,4 @@
-param([string]$JdkPath = $env:JAVA_HOME, [string]$SdkPath = $env:ANDROID_HOME)
+param([string]$JdkPath = $env:JAVA_HOME, [string]$SdkPath = $env:ANDROID_HOME, [string]$OutputName = 'Fart-Crew-debug.apk')
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location -LiteralPath $projectRoot
@@ -27,7 +27,8 @@ try {
     & ./gradlew.bat --no-daemon --console=plain --stacktrace '-Dorg.gradle.jvmargs=-Xmx1536m -Djava.net.preferIPv4Stack=true' assembleDebug
     if ($LASTEXITCODE -ne 0) { throw "Android build failed: $LASTEXITCODE" }
 } finally { Pop-Location }
-$apk = "$projectRoot/artifacts/Fart-Together-debug.apk"
+if ([IO.Path]::GetFileName($OutputName) -ne $OutputName -or -not $OutputName.EndsWith('.apk')) { throw 'OutputName must be an APK filename without a directory.' }
+$apk = "$projectRoot/artifacts/$OutputName"
 New-Item -ItemType Directory -Force "$projectRoot/artifacts" | Out-Null
 Copy-Item -LiteralPath "$projectRoot/packages/client/android/app/build/outputs/apk/debug/app-debug.apk" -Destination $apk -Force
 $signer = Get-ChildItem -Path "$env:ANDROID_HOME/build-tools/*/apksigner.bat" | Sort-Object FullName -Descending | Select-Object -First 1
@@ -37,4 +38,4 @@ if ($LASTEXITCODE -ne 0) { throw 'APK signature verification failed' }
 Get-Item -LiteralPath $apk | Select-Object FullName,Length
 $apkHash = Get-FileHash -LiteralPath $apk -Algorithm SHA256
 $apkHash | Format-List
-Set-Content -LiteralPath "$apk.sha256" -Value ($apkHash.Hash.ToLowerInvariant() + '  Fart-Together-debug.apk') -Encoding Ascii
+Set-Content -LiteralPath "$apk.sha256" -Value ($apkHash.Hash.ToLowerInvariant() + '  ' + $OutputName) -Encoding Ascii

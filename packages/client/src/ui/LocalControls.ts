@@ -28,6 +28,6 @@ export class LocalControls {
     }
     const length=Math.hypot(x,z);if(length>.1){x/=Math.max(1,length);z/=Math.max(1,length);this.directions.set(index,{x,z});}
     const dir=this.directions.get(index)||{x:0,z:1};lean=lean||this.keys.has('ShiftLeft')||this.keys.has('ShiftRight');
-    return {...dir,power,move,leanX:index===0&&primary.leanX?primary.leanX:lean?dir.x:0,leanZ:index===0&&primary.leanZ?primary.leanZ:lean?dir.z:0};
+    return {x:0,z:1,power,move,leanX:index===0&&primary.leanX?primary.leanX:lean?dir.x:0,leanZ:index===0&&primary.leanZ?primary.leanZ:lean?dir.z:0};
   }
 }

@@ -2,6 +2,8 @@ import {WaterScene as dt} from '../scene/WaterScene';
 import {TouchControls as ut} from '../ui/TouchControls';
 import {LocalControls as ft} from '../ui/LocalControls';
 import {NetworkManager as mt} from '../core/NetworkManager';
+import {serverURL} from '../core/NetworkManager';
+import {FartAudio} from '../core/FartAudio';
 const __vite__mapDeps = (i, m = __vite__mapDeps, d = (m.f || (m.f = ["assets/web-CwqxwgSo.js", "assets/babylon-Cc7_0afu.js", "assets/network-CtBm-6sI.js"]))) => i.map(i => d[i]);
 var Ye = Object.defineProperty;
 var _e = (i, e, s) => e in i ? Ye(i, e, { enumerable: !0, configurable: !0, writable: !0, value: s }) : i[e] = s;
@@ -188,8 +190,8 @@ const St = ye("Haptics", { web: () => Re(() => import("./web-CwqxwgSo.js"), __vi
 re.innerHTML = `
 <canvas id="world" aria-label="Cooperative boat obstacle course"></canvas>
 <div class="menu-shade"></div>
-<header id="menu-header"><span class="game-brand">FT <small>TOGETHER ON ONE BOAT</small></span><nav><button id="how" aria-label="How to play">?</button><button id="records" aria-label="Journey records">⚑</button><button id="settings" aria-label="Settings">⚙</button></nav></header>
-<main id="menu"><section class="launch-panel"><span class="overline">A COOPERATIVE PHYSICS ADVENTURE</span><h1>FART<span>TOGETHER</span></h1><p class="tagline">One boat. One crew.<br>Find your direction. Make some wind.</p><button id="choose-animal" class="character-choice"></button><div class="launch-options"><label>CREW SIZE<select id="crew-size"><option value="4">Up to 4 players</option><option value="8">Up to 8 · large boat</option></select></label><label>PLAY TOGETHER<select id="play-style"><option value="online">Online / LAN</option><option value="local">Local / shared screen</option></select></label></div><button id="local-setup" class="quiet-button" hidden>Configure local players ↗</button><div class="launch-actions"><button id="play" class="game-button">ASSEMBLE CREW <span>→</span></button><button id="join" class="outline-button">JOIN A BOAT</button></div><div class="co-op-note"><i></i> EVERY PLAYER STEERS THE SAME RAFT</div></section><section class="course-picker"><div class="picker-title"><span>CHOOSE YOUR JOURNEY</span><small id="course-description"></small></div><div id="courses"></div></section></main>
+<header id="menu-header"><span class="game-brand"><img src="/brand/icon-192.png" alt=""> FC <small>FART CREW</small></span><nav><button id="how" aria-label="How to play">?</button><button id="records" aria-label="Journey records">⚑</button><button id="settings" aria-label="Settings">⚙</button></nav></header>
+<main id="menu"><section class="launch-panel"><span class="overline">A COOPERATIVE PHYSICS ADVENTURE</span><h1>FART<span>CREW</span></h1><p class="tagline">One boat. One crew.<br>Find your direction. Make some wind.</p><button id="choose-animal" class="character-choice"></button><div class="launch-options"><label>CREW SIZE<select id="crew-size"><option value="4">Up to 4 players</option><option value="8">Up to 8 · large boat</option></select></label><label>PLAY TOGETHER<select id="play-style"><option value="online">Online / LAN</option><option value="local">Local / shared screen</option></select></label></div><button id="local-setup" class="quiet-button" hidden>Configure local players ↗</button><div class="launch-actions"><button id="play" class="game-button">ASSEMBLE CREW <span>→</span></button><button id="join" class="outline-button">JOIN A BOAT</button></div><div class="co-op-note"><i></i> EVERY PLAYER STEERS THE SAME RAFT</div></section><section class="course-picker"><div class="picker-title"><span>CHOOSE YOUR JOURNEY</span><small id="course-description"></small></div><div id="courses"></div></section></main>
 <section id="game-ui" hidden>
 <div class="journey-progress" aria-label="Journey progress"><i id="progress-fill"></i><b style="left:30.9%">⚑</b><b style="left:61.8%">⚑</b><b style="left:87.1%">⚑</b><span>⚑</span></div>
 <div class="fuel-hud"><button id="crew-details" aria-label="Crew details"><span id="hud-avatar">🦛</span></button><div><span id="hud-name">Captain</span><div class="fuel-meter"><i id="gas-fill"></i></div><small id="gas-number">100% GAS</small></div></div>
@@ -198,7 +200,7 @@ re.innerHTML = `
 <div id="name-tags" aria-hidden="true"></div>
 <div id="lobby" class="game-panel"><span class="overline">ALL ABOARD THE SAME BOAT</span><h2>Bring the crew together.</h2><p id="lobby-description">Share your room code. Pick a seat. Everyone’s thrust moves the same raft.</p><button id="copy-code" class="room-code" title="Copy invite link"></button><div id="lobby-crew"></div><button id="start" class="game-button">START JOURNEY <span>→</span></button><small id="host-note"></small></div>
 <div id="countdown" hidden></div>
-<div class="session-footer"><button id="session-menu"><kbd>ESC</kbd> MENU</button><span id="keyboard-hint">WASD · AIM &nbsp; SPACE · GAS &nbsp; Q/E · MOVE</span><button id="control-help" aria-label="Show controls">?</button></div>
+<div class="session-footer"><button id="session-menu"><kbd>ESC</kbd> MENU</button><span id="keyboard-hint">SPACE · GAS &nbsp; Q/E · MOVE &nbsp; COORDINATE TO TURN</span><button id="control-help" aria-label="Show controls">?</button></div>
 <div id="controls" hidden><div class="aim-control"><div id="joystick" aria-label="Drag to aim thrust"><span>+</span><div id="knob"></div></div><small>AIM THRUST</small><div class="shuffle-controls"><button id="shuffle-left" aria-label="Move sideways left">◀</button><span>MOVE ON RAFT</span><button id="shuffle-right" aria-label="Move sideways right">▶</button></div></div><div class="gas-control"><label>POWER <input id="power" aria-label="Thrust power" type="range" min="20" max="100" value="80"></label><button id="thrust" aria-label="Hold to thrust"><span>≋</span><b>GAS</b></button><small>HOLD TO THRUST</small><button id="balance" aria-label="Hold to lean toward aim">LEAN</button></div></div>
 <div id="finish" class="game-panel" hidden><span class="overline">THE WHOLE CREW MADE IT</span><h2>Better together.</h2><p>Your crew guided one boat through the entire course.</p><strong id="finish-time"></strong><p id="finish-detail"></p><button id="again" class="game-button">ANOTHER JOURNEY →</button><button id="finish-home" class="quiet-button">BACK TO SHORE</button></div>
 <div id="failed" class="game-panel failure-panel" hidden><span class="overline">TEAM FAILED</span><h2>POP! Raft burst.</h2><p id="failure-reason"></p><p>One spike ends the journey for the whole crew.</p><button id="retry" class="game-button">TRY AGAIN →</button><small id="retry-note">Waiting for the host to restart.</small><button id="failed-home" class="quiet-button">BACK TO SHORE</button></div></section><div id="toast" role="status"></div><dialog id="modal"><button id="close-modal" aria-label="Close dialog">×</button><div id="modal-content"></div></dialog>`;
@@ -217,6 +219,7 @@ function X(i) { return i.replace(/[&<>"']/g, e => ({ "&": "&amp;", "<": "&lt;", 
 const y = Ie("ft-profile", { name: "Captain", character: "hippo", wins: 0 });
 nt(y.character) || (y.character = "hippo");
 const K = Ie("ft-settings", { sound: !0, haptics: !0, reduced: !1 });
+const fartAudio = new FartAudio(()=>K.sound);
 let Y = "lagoon", ne = 4, ee = "online", k, de = !1, me = !1, ge = "", we = 0, T = [{ name: y.name, character: y.character, binding: "keyboard0" }, { name: "Player 2", character: "croc", binding: "keyboard1" }];
 const E = new mt;
 let x;
@@ -284,7 +287,7 @@ async function be(i, e = "") { if (!de) {
         s.searchParams.set("room", E.room.roomId), history.replaceState(null, "", s), oe(240, .2);
     }
     catch (s) {
-        console.error(s), B(i === "join" ? "Could not join that boat. Check the code and available seats." : "Could not reach the crew server. Make sure npm run dev is running.");
+        console.error(s), B(i === "join" ? "Could not join that boat. Check the code and available seats." : "Could not reach the crew server. Check the server address in Settings and make sure the server is running.");
     }
     finally {
         de = !1, c("play").innerHTML = "ASSEMBLE CREW <span>→</span>";
@@ -292,7 +295,7 @@ async function be(i, e = "") { if (!de) {
 } }
 function We() { k = void 0, U.active = !1, U.keys.clear(), U.firing = !1, Q.active = !1, Q.keys.clear(), x.playing = !1, x.state = void 0, c("menu").hidden = !1, c("menu-header").hidden = !1, c("game-ui").hidden = !0, c("name-tags").innerHTML = "", re.classList.remove("in-game"); const i = new URL(location.href); i.searchParams.delete("room"), history.replaceState(null, "", i); }
 async function Ke() { me = !0, await E.leave(), q(), We(); }
-async function xe() { const i = new URL(location.href); k && i.searchParams.set("room", k.room); try {
+async function xe() { const i = new URL(serverURL().replace(/^ws/,"http")); k && i.searchParams.set("room", k.room); try {
     await navigator.clipboard.writeText(i.toString()), B("Crew invite copied.");
 }
 catch {
@@ -308,7 +311,7 @@ c("rescue").onclick = () => { for (const i of (k == null ? void 0 : k.players.fi
     E.action("rescue", { id: i.id }); };
 c("camera-mode").onclick = () => { x.cameraMode = x.cameraMode === "bird" ? "isometric" : "bird", B(x.cameraMode === "bird" ? "Bird view" : "Follow camera"); };
 c("power").oninput = i => U.strength = Number(i.target.value) / 100;
-function Be() { _('<span class="overline">COORDINATE. STEER. STAY TOGETHER.</span><h2>One crew. One raft.</h2><div class="instructions"><b>01 · DIRECTION</b><p>Use WASD / arrow keys or the touch joystick to aim your thrust. Hold GAS or Space to propel the raft in the aimed direction. There is no automatic thrust. Animals grip the rim facing inward.</p><b>02 · TIMING & POWER</b><p>Hold Space or the gas button to thrust. Adjust the power slider. Release to refill gas. Players at different seats create different turning forces. Use the two MOVE ON RAFT buttons or Q/E to shuffle sideways. Hold LEAN plus aim, or Shift plus direction, to counterbalance.</p><b>03 · FOLLOW THE CHANNEL</b><p>Steer through bends and narrow elevated canals. Avoid the spiked banks, curled sweepers and sliding barriers. Build speed using coordinated gas before jumping a gap. Touching any spike instantly pops the raft and fails the entire crew.</p><b>04 · FINISH TOGETHER</b><p>Checkpoints save the whole crew. The reset button needs half the crew’s votes and adds five seconds. Reach the final flags together. There are no opposing boats or race standings.</p></div><p>Local keyboard layouts and gamepad assignments are configured before joining. Every local and online player steers this same boat.</p>'); }
+function Be() { _('<span class="overline">COORDINATE. STEER. STAY TOGETHER.</span><h2>One crew. One raft.</h2><div class="instructions"><b>01 · DIRECTION</b><p>Gas leaves the butt of your animal and pushes the raft in the direction the animal faces. Opposite seats can cancel each other. Coordinate which crew members fire; the rear pair can push forward.</p><b>02 · TIMING & POWER</b><p>Hold Space or the gas button to thrust. Adjust the power slider. Release to refill gas. Players at different seats create different turning forces. Use the two MOVE ON RAFT buttons or Q/E to shuffle sideways. Use Shift plus a direction on keyboard to counterbalance.</p><b>03 · FOLLOW THE CHANNEL</b><p>Steer through bends and narrow elevated canals. Avoid the spiked banks, curled sweepers and sliding barriers. Build speed using coordinated gas before jumping a gap. Touching any spike instantly pops the raft and fails the entire crew.</p><b>04 · FINISH TOGETHER</b><p>Checkpoints save the whole crew. The reset button needs half the crew’s votes and adds five seconds. Reach the final flags together. There are no opposing boats or race standings.</p></div><p>Local keyboard layouts and gamepad assignments are configured before joining. Every local and online player steers this same boat.</p>'); }
 c("how").onclick = Be;
 c("control-help").onclick = Be;
 function Fe() { _(`<span class="overline">STILL ABOARD</span><h2>${k ? J[k.course].name : "Your journey"}</h2><p>The boat continues moving while this menu is open. Room code: <b>${k == null ? void 0 : k.room}</b></p><button id="resume" class="game-button">RETURN TO THE RAFT →</button><button id="invite-session" class="outline-button">COPY CREW INVITE</button><button id="leave-session" class="quiet-button">LEAVE CREW</button>`), c("resume").onclick = q, c("invite-session").onclick = xe, c("leave-session").onclick = Ke; }
@@ -329,9 +332,8 @@ c("records").onclick = async () => { _(`<span class="overline">JOURNEYS COMPLETE
 catch {
     c("record-list") && (c("record-list").textContent = "The logbook is unavailable. Check the game server.");
 } };
-let $e = 0;
-setInterval(() => { var n; if (!E.room)
-    return; const i = c("modal").open, e = i ? { x: 0, z: 0, power: 0 } : U.read(), s = (k == null ? void 0 : k.players.filter(a => { var t; return (a.owner || a.id) === ((t = E.room) == null ? void 0 : t.sessionId); })) || []; ee === "local" ? (Q.active = !i && U.active, E.localInputs(s.map((a, t) => ({ id: a.id, input: Q.read(t, T[t] || T[0], e) })))) : E.input(e), x.setAim(e.x, e.z, e.power), e.power > 0 && (((n = s[0]) == null ? void 0 : n.gas) ?? 0) > 0 && Date.now() - $e > 300 && ($e = Date.now(), oe(75 + Math.random() * 30, .17)); }, 50);
+
+setInterval(() => { if (!E.room) { fartAudio.stop(); return; } const i = c("modal").open, e = i ? { x: 0, z: 0, power: 0 } : U.read(), s = (k == null ? void 0 : k.players.filter(a => { var t; return (a.owner || a.id) === ((t = E.room) == null ? void 0 : t.sessionId); })) || []; ee === "local" ? (Q.active = !i && U.active, E.localInputs(s.map((a, t) => ({ id: a.id, input: Q.read(t, T[t] || T[0], e) })))) : E.input(e), x.setAim(e.x, e.z, e.power), fartAudio.update(k?.players || [], K.sound && k?.phase === "playing" && k.countdown <= 0 && !i); }, 50);
 const Oe = new URL(location.href).searchParams.get("room");
 Oe && (c("join").click(), c("room-code").value = Oe.toUpperCase());
 export { fe as I, Te as N, je as W };
