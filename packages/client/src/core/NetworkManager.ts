@@ -3,7 +3,8 @@ import type { Snapshot, CourseId, Input, CharacterId, LocalPlayer } from '@ft/sh
 import { Capacitor } from '@capacitor/core';
 import { VoiceChat } from './VoiceChat';
 import {journeyPreferences} from './JourneyPreferences';
-export function configuredServer(){try{return localStorage.getItem('ft-server')||import.meta.env.VITE_SERVER_URL||'';}catch{return import.meta.env.VITE_SERVER_URL||'';}}
+export function defaultServer(){return import.meta.env.VITE_SERVER_URL||(Capacitor.isNativePlatform()?'wss://fc-game.onrender.com':'');}
+export function configuredServer(){try{return localStorage.getItem('ft-server')||defaultServer();}catch{return defaultServer();}}
 export function setServer(value:string){
   if(!value.trim()){localStorage.removeItem('ft-server');return;}
   const url=new URL(value.trim().replace(/^http/,'ws'));

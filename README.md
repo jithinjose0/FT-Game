@@ -8,8 +8,8 @@ One crew steers one raft with manually triggered fart thrust. Four players are s
 
 - **[Deploy on Render with internet crew voice](docs/RENDER.md)** — free server Blueprint, CI/CD, TURN relay setup and phone verification.
 - **[Complete step-by-step setup and hosting guide](docs/SETUP.md)** — server setup, Android installation, Wi-Fi troubleshooting, cloud deployment, APK builds and maintenance.
-- **[Download the signed test APK](artifacts/Fart-Crew-v1.8-debug.apk)** — Android API 23+, 6.1 MB. [Checksum](artifacts/Fart-Crew-v1.8-debug.apk.sha256).
-- **[APK installation notes](artifacts/INSTALL-v1.8.md)** — sound selection, boat colours and wider mobile camera.
+- **[Download the signed test APK](artifacts/Fart-Crew-v1.9-debug.apk)** — Android API 23+, online server selected automatically. [Checksum](artifacts/Fart-Crew-v1.9-debug.apk.sha256).
+- **[APK installation notes](artifacts/INSTALL-v1.9.md)** — automatic online connection, sound selection, boat colours and wider mobile camera.
 - **[Track generator design](docs/track-design.md)** and [sample map](levels/canyon-coop.json).
 
 ## Quick local run
