@@ -4,7 +4,7 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector.js';
 import { COURSES, FINISH, TICK, courseFrame, courseCoins, sanitizeInput, isCharacter, type Snapshot, type Input, type CourseId } from '@ft/shared';
 import { ServerPhysics } from '../physics/ServerPhysics.ts';
 import { saveScore } from '../storage.ts';
-import {voiceIceServers} from '../voice.ts';
+import {configuredVoiceIceServers} from '../voice.ts';
 import {characterThrust,isBoatColor} from '@ft/shared';
 
 export class RaftRoom extends Room {
@@ -14,6 +14,7 @@ export class RaftRoom extends Room {
   inputs=new Map<string,{input:Input;at:number}>();
   votes=new Set<string>();lastReset=0;accumulator=0;
   voiceMembers=new Set<string>();
+  voiceRequests=new Map<string,symbol>();
   voiceRates=new Map<string,{at:number;count:number}>();
   async onCreate(options:any){
     if(options.mode&&options.mode!=='coop')throw new ServerError(400,'This game is shared-boat co-op. Refresh the client to join a crew.');
@@ -23,10 +24,15 @@ export class RaftRoom extends Room {
     this.physics=new ServerPhysics();await this.physics.init(course,this.maxClients);
     this.game={boatColor:isBoatColor(options.boatColor)?options.boatColor:'wood',room:this.roomId,phase:'lobby',mode:'coop',crewSize:this.maxClients,boats:[{id:0,x:0,y:0,z:5,angle:0,vx:0,vz:0,penalties:0,checkpoint:0,health:100,roll:0,pitch:0}],coins:0,collected:[],damageTick:0,course,players:[],x:0,z:5,angle:0,vx:0,vz:0,time:0,penalties:0,checkpoint:0,countdown:0,host:'',tick:0};
     this.onMessage('input',(client,value)=>this.acceptInput(client.sessionId,client.sessionId,value));
-    this.onMessage('voice-ready',(client,value)=>{
-      if(value===false){this.voiceMembers.delete(client.sessionId);this.broadcast('voice-left',client.sessionId);return;}
-      if(value!==true||this.voiceMembers.has(client.sessionId))return;
-      client.send('voice-config',{iceServers:voiceIceServers(client.sessionId)});
+    this.onMessage('voice-ready',async(client,value)=>{
+      if(value===false){this.voiceRequests.delete(client.sessionId);this.voiceMembers.delete(client.sessionId);this.broadcast('voice-left',client.sessionId);return;}
+      if(value!==true||this.voiceMembers.has(client.sessionId)||this.voiceRequests.has(client.sessionId))return;
+      const request=Symbol();this.voiceRequests.set(client.sessionId,request);
+      let iceServers;
+      try{iceServers=await configuredVoiceIceServers(client.sessionId);}catch{if(this.voiceRequests.get(client.sessionId)===request){this.voiceRequests.delete(client.sessionId);client.send('voice-config',{iceServers:[]});client.send('notice','Voice relay credentials could not be loaded. Check the TURN provider settings and re-enable crew voice.');}return;}
+      if(this.voiceRequests.get(client.sessionId)!==request||!this.clients.includes(client))return;
+      this.voiceRequests.delete(client.sessionId);
+      client.send('voice-config',{iceServers});
       client.send('voice-peers',[...this.voiceMembers]);this.voiceMembers.add(client.sessionId);
     });
     this.onMessage('voice-signal',(client,value)=>{
@@ -63,6 +69,7 @@ export class RaftRoom extends Room {
     if(this.game.players.length>=this.maxClients)void this.lock();client.send('snapshot',this.game);
   }
   onLeave(client:Client){
+    this.voiceRequests.delete(client.sessionId);
     this.voiceMembers.delete(client.sessionId);this.voiceRates.delete(client.sessionId);this.broadcast('voice-left',client.sessionId);
     for(const p of this.game.players.filter(p=>(p.owner||p.id)===client.sessionId)){this.inputs.delete(p.id);this.votes.delete(p.id);}
     this.game.players=this.game.players.filter(p=>(p.owner||p.id)!==client.sessionId);

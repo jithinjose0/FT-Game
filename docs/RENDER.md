@@ -16,6 +16,8 @@ Free Render instances sleep after 15 idle minutes and may take about a minute to
 
 ## 2. Configure reliable crew voice
 
+For the simpler managed-provider route, follow [account-based Metered TURN](MANAGED-VOICE.md). It uses `VOICE_METERED_HOST` and `VOICE_METERED_API_KEY` on the backend and does not require a new APK.
+
 Render's web service hosts HTTP/WebSocket traffic; it cannot serve as this game's public UDP TURN relay. Use a managed TURN service compatible with coturn REST shared-secret credentials, or a separate Linux VM running coturn. Never put the shared secret in the APK, GitHub repository or a `VITE_*` variable.
 
 For a self-hosted relay:
