@@ -1,0 +1,65 @@
+name: iPhone build
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/ios.yml
+      - tools/prepare-ios.py
+permissions:
+  contents: read
+jobs:
+  iphone:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: python -m pip install Pillow==11.3.0
+      - run: npm run build -w client
+        env:
+          VITE_SERVER_URL: wss://fc-game.onrender.com
+      - run: npx cap add ios
+        working-directory: packages/client
+      - run: python tools/prepare-ios.py
+      - run: npx cap sync ios
+        working-directory: packages/client
+      - name: Compile for physical iPhones (unsigned)
+        working-directory: packages/client/ios/App
+        run: >-
+          xcodebuild -workspace App.xcworkspace -scheme App
+          -configuration Release -sdk iphoneos -destination 'generic/platform=iOS'
+          -derivedDataPath build-device CODE_SIGNING_ALLOWED=NO build
+      - name: Package unsigned device app
+        run: |
+          mkdir -p ios-output/Payload
+          cp -R packages/client/ios/App/build-device/Build/Products/Release-iphoneos/App.app ios-output/Payload/
+          cp docs/IPHONE.md ios-output/READ-ME-FIRST.md
+          cd ios-output
+          zip -qr Fart-Crew-1.9-UNSIGNED.ipa Payload
+      - name: Compile for iPhone Simulator
+        working-directory: packages/client/ios/App
+        run: >-
+          xcodebuild -workspace App.xcworkspace -scheme App
+          -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath build-simulator CODE_SIGNING_ALLOWED=NO build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Fart-Crew-1.9-unsigned-iPhone
+          path: |
+            ios-output/Fart-Crew-1.9-UNSIGNED.ipa
+            ios-output/READ-ME-FIRST.md
+          if-no-files-found: error
+      - name: Preserve simulator bundle
+        run: ditto -c -k --sequesterRsrc --keepParent packages/client/ios/App/build-simulator/Build/Products/Debug-iphonesimulator/App.app ios-output/Fart-Crew-iPhone-Simulator.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Fart-Crew-iPhone-Simulator
+          path: ios-output/Fart-Crew-iPhone-Simulator.zip
+          if-no-files-found: error
